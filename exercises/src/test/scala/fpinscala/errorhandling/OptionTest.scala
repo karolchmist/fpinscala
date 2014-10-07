@@ -30,16 +30,6 @@ class OptionTest extends Specification {
       (None orElse Some(4)) mustEqual Some(4)
     }
     "filter" in {
-      val flatTwice: (Int) => Some[Int] = a => Some(a * 2)
-      (Some(3) filter {_ % 2 == 0}) mustEqual None
-      (Some(4) filter {_ % 2 == 0}) mustEqual Some(4)
-      ((None:Option[Int]) filter {_ % 2 == 0}) mustEqual None
-/**
- *
- */
-class OptionTest extends org.specs2.mutable.Specification {
-  "Option" should {
-    "filter" in {
       Some(1) filter(_ % 2 == 0) mustEqual None
       Some(2) filter(_ % 2 == 0) mustEqual Some(2)
       None filter(Nil) mustEqual None
