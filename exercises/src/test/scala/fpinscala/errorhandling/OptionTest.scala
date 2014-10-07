@@ -43,5 +43,28 @@ class OptionTest extends Specification {
     "map2" in {
       Option.map2(Some(2), Some("a"))((a,b) => a + b) mustEqual Some("2a")
     }
+    "sequence" in {
+      Option.sequence(List()) mustEqual Some(Nil)
+      Option.sequence(List(Some(1))) mustEqual Some(List(1))
+      Option.sequence(List(Some(1), Some(2))) mustEqual Some(List(1,2))
+      Option.sequence(List(Some(1), None)) mustEqual None
+      Option.sequence(List(None, Some(2))) mustEqual None
+    }
+    "traverse" in {
+      def Try[A](a: => A): Option[A] =
+        try Some(a)
+        catch { case e: Exception => None }
+
+      Option.traverse(List("1", "4"))(a=>Try(a.toInt)) mustEqual Some(List(1,4))
+      Option.traverse(List("1", "abc", "4"))(a=>Try(a.toInt)) mustEqual None
+    }
+    "sequence2" in {
+      Option.sequence2(List()) mustEqual Some(Nil)
+      Option.sequence2(List(Some(1))) mustEqual Some(List(1))
+      Option.sequence2(List(Some(1), Some(2))) mustEqual Some(List(1,2))
+      Option.sequence2(List(Some(1), None)) mustEqual None
+      Option.sequence2(List(None, Some(2))) mustEqual None
+    }
+
   }
 }

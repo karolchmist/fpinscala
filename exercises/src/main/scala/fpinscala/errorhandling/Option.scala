@@ -23,7 +23,6 @@ sealed trait Option[+A] {
 
   def filter(f: A => Boolean): Option[A] = flatMap( a => if(f(a)) Some(a) else None )
 
-
 }
 
 case class Some[+A](get: A) extends Option[A]
@@ -38,13 +37,21 @@ object Option {
     mean(xs).flatMap(m => mean(xs.map(x => math.pow(x - m,2))))
 
 
-  def map2[A,B,C](ao: Option[A], bo: Option[B])(f: (A, B) => C): Option[C] = (ao, bo) match {
-    case (None, _) => None
-    case (_, None) => None
-    case (Some(a), Some(b)) => Some(f(a,b))
+  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] =
+    a flatMap ( x =>
+      b map ( y =>
+        f(x,y) ) )
+
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+    case Nil => Some(Nil)
+    case x::xs => x flatMap(a => sequence(xs) map (a::_) )
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = sys.error("todo")
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
+    case Nil => Some(Nil)
+    case x::xs => map2 (f(x), traverse(xs)(f))(_ :: _)
+  }
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = sys.error("todo")
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] =
+    traverse(a)(x => x.orElse(None))
 }
