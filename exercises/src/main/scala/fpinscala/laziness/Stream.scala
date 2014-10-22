@@ -48,7 +48,19 @@ trait Stream[+A] {
     case _ => Empty
   }
 
-  def forAll(p: A => Boolean): Boolean = sys.error("todo")
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a,b) => p(a) && b)
+
+  def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Empty:Stream[A])((a,b) => if (p(a)) Stream.cons(a, b) else Empty)
+
+  def map[B](f: A => B) : Stream[B] = foldRight(Empty:Stream[B])((a,b) => Stream.cons(f(a), b) )
+
+  def filter(p: A => Boolean) : Stream[A] = foldRight(Empty:Stream[A])((a,b) => if(p(a)) Stream.cons(a, b) else b )
+
+  def append[B>:A](s:Stream[B]): Stream[B] =
+    foldRight(s)((a,b) => Stream.cons(a,b))
+
+  def flatMap[B](f: A => Stream[B]) : Stream[B] =
+      foldRight(Empty:Stream[B])((a,b) => f(a).append(b) )
 
   def startsWith[B](s: Stream[B]): Boolean = sys.error("todo")
 }
@@ -70,7 +82,10 @@ object Stream {
 
 
   val ones: Stream[Int] = Stream.cons(1, ones)
-  def from(n: Int): Stream[Int] = sys.error("todo")
+
+  def constant(n:Int): Stream[Int] = Stream.cons(n, constant(n))
+
+  def from(n: Int): Stream[Int] = Stream.cons(n, from(n+1))
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = sys.error("todo")
 }
