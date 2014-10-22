@@ -31,6 +31,10 @@ class StreamTest extends Specification {
       Stream(1, 2, 4,8).takeWhile2( _ < 4 ).toList mustEqual List(1,2)
       Stream(1, 2, 4,8).takeWhile2( _ < 9 ).toList mustEqual List(1,2,4,8)
     }
+    "headOption" in {
+      Stream.empty.headOption mustEqual Option.empty
+      Stream(1, 2, 4,8).headOption mustEqual Option(1)
+    }
     "map" in {
       Stream.empty.map( (_:Any) => throw new IllegalStateException).toList mustEqual List()
       Stream(1, 2, 4,8).map(_ + 10 ).toList mustEqual List(11,12,14,18)
@@ -56,6 +60,15 @@ class StreamTest extends Specification {
     }
     "from" in {
       Stream.from(5).take(3).toList mustEqual List(5,6,7)
+    }
+    "fibo" in {
+      Stream.fibo.take(1).toList mustEqual List(0)
+      Stream.fibo.take(2).toList mustEqual List(0,1)
+      Stream.fibo.take(3).toList mustEqual List(0,1,1)
+      Stream.fibo.take(4).toList mustEqual List(0,1,1,2)
+      Stream.fibo.take(5).toList mustEqual List(0,1,1,2,3)
+      Stream.fibo.take(6).toList mustEqual List(0,1,1,2,3,5)
+      Stream.fibo.take(7).toList mustEqual List(0,1,1,2,3,5,8)
     }
   }
 }

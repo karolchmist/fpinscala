@@ -52,6 +52,9 @@ trait Stream[+A] {
 
   def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Empty:Stream[A])((a,b) => if (p(a)) Stream.cons(a, b) else Empty)
 
+  def headOption : Option[A] =
+    foldRight(Option.empty:Option[A])((a:A,b) => Option(a) )
+
   def map[B](f: A => B) : Stream[B] = foldRight(Empty:Stream[B])((a,b) => Stream.cons(f(a), b) )
 
   def filter(p: A => Boolean) : Stream[A] = foldRight(Empty:Stream[A])((a,b) => if(p(a)) Stream.cons(a, b) else b )
@@ -86,6 +89,12 @@ object Stream {
   def constant(n:Int): Stream[Int] = Stream.cons(n, constant(n))
 
   def from(n: Int): Stream[Int] = Stream.cons(n, from(n+1))
+
+  val fibo : Stream[Int] = {
+    def go(n0:Int, n1:Int) : Stream[Int] =
+      cons(n0, go(n1, n0+n1))
+    go(0,1)
+  }
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = sys.error("todo")
 }
