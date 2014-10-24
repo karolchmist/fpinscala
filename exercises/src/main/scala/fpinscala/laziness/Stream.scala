@@ -66,6 +66,46 @@ trait Stream[+A] {
       foldRight(Empty:Stream[B])((a,b) => f(a).append(b) )
 
   def startsWith[B](s: Stream[B]): Boolean = sys.error("todo")
+
+  def mapUnfold[B](f: A => B): Stream[B] = Stream.unfold(this){
+    case Empty => None
+    case Cons(h, t) => Some((f(h()),t()))
+  }
+
+  def takeUnfold(n:Int) : Stream[A] = Stream.unfold((n, this)) {
+    case (_, Empty) => None
+    case (m, _) if m <= 0 => None
+    case (m, Cons(h,t)) => Some(h(),(m-1,t()))
+  }
+
+  def takeWhileUnfold(p: A => Boolean) : Stream[A] = Stream.unfold(this) {
+    case Empty => None
+    case Cons(h, t) if p(h()) => Some(h(), t())
+    case _ => None
+  }
+
+  def zipWithUnfold[B](sb: Stream[B]) : Stream[(A,B)] = Stream.unfold((this,sb)) {
+    case (Empty,_) => None
+    case (_,Empty) => None
+    case (Cons(h1,t1),Cons(h2,t2)) => Some((h1(),h2()), (t1(),t2()))
+  }
+  def zipAllUnfold[B](sb: Stream[B]) : Stream[(Option[A], Option[B])] = Stream.unfold((this,sb)){
+    case (Empty,Empty) => None
+    case (Empty,Cons(h,t)) => {
+      // without implicit types Scala does not compile
+      val a: (Option[A], Option[B]) = (None, Some(h()))
+      Some(a, (Empty,t()))
+    }
+    case (Cons(h,t),Empty) => {
+      val a: (Option[A], Option[B]) = (Some(h()), None)
+      val s: (Stream[A], Stream[B]) = (t(), Empty)
+      Some(a, s)
+    }
+    case (Cons(h1,t1),Cons(h2,t2)) => Some(
+      (Some(h1()),Some(h2())),
+      (t1(),t2())
+    )
+  }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -96,5 +136,19 @@ object Stream {
     go(0,1)
   }
 
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = sys.error("todo")
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
+    def go(n:S) : Stream[A] = {
+      f(n) match {
+        case Some((a,s)) => cons(a, go(s))
+        case None => empty
+      }
+    }
+    go(z)
+  }
+
+  def fiboUnfold = unfold((0,1)){ case (n0,n1) => Some(n0,(n1,n0+n1)) }
+
+  def fromUnfold(n:Int) = unfold(n){ s => Some(s, s+1) }
+  def constantUnfold(n:Int) = unfold(n){ s => Some(s, s) }
+  val onesUnfold = constantUnfold(1)
 }
