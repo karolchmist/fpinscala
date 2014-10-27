@@ -120,6 +120,14 @@ class StreamTest extends Specification {
       Stream(1).zipAllUnfold(Stream.from(5)).take(3).toList mustEqual List((Some(1),Some(5)),(None,Some(6)),(None,Some(7)))
       Stream.from(5).zipAllUnfold(Empty).take(2).toList mustEqual List((Some(5),None),(Some(6),None))
     }
-
+    "startsWith" in {
+      Empty.startsWith(Empty) mustEqual true
+      Empty.startsWith(Stream(1)) mustEqual false
+      Stream(1,2,3,4).startsWith(Empty) mustEqual true
+      Stream(1,2,3,4).startsWith(Stream(1)) mustEqual true
+      Stream(1,2,3,4).startsWith(Stream(1,2,3)) mustEqual true
+      Stream(1,2,3,4).startsWith(Stream(1,2,3,4)) mustEqual true
+      Stream(1,2,3,4).startsWith(Stream(1,2,3,4,5)) mustEqual false
+    }
   }
 }
