@@ -10,13 +10,33 @@ import org.specs2.mutable.Specification
  */
 class StateTest extends Specification with ScalaCheck {
   "RNG" should {
-    "produce nonNegativeInt" ! prop { (s:Int) =>
+    "nonNegativeInt" ! prop { (s:Int) =>
       val (i1, rng2) = RNG.nonNegativeInt( Simple (s) )
-      i1 >= 0 && i1 <= Int.MaxValue
+      testInt(i1)
     }
-    "produce double" ! prop { (s: Int) =>
+    "double" ! prop { (s: Int) =>
       val (i1, rng2) = RNG.double (Simple (s) )
-      i1 >= 0.0 && i1 < 1.0
+      testDouble(i1)
     }
+    "intDouble" ! prop { (s: Int) =>
+      val ((i,d), rng2) = RNG.intDouble (Simple (s) )
+      testDouble(d) && testInt(i)
+    }
+    "doubleInt" ! prop { (s: Int) =>
+      val ((d,i), rng2) = RNG.doubleInt(Simple (s) )
+      testDouble(d) && testInt(i)
+    }
+    "double3" ! prop { (s: Int) =>
+      val ((d1,d2,d3), rng2) = RNG.double3(Simple (s) )
+      testDouble(d1) && testDouble(d2) && testDouble(d3)
+    }
+  }
+
+  def testDouble(i1: Double): Boolean = {
+    i1 >= 0.0 && i1 < 1.0
+  }
+
+  def testInt(i1: Int): Boolean = {
+    i1 >= 0 && i1 <= Int.MaxValue
   }
 }
