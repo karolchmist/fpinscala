@@ -30,6 +30,12 @@ class StateTest extends Specification with ScalaCheck {
       val ((d1,d2,d3), rng2) = RNG.double3(Simple (s) )
       testDouble(d1) && testDouble(d2) && testDouble(d3)
     }
+    "ints" ! prop { (count: Int, s: Int) =>
+      (count >= 0 && count < 100) ==> {
+        val (is, rng2) = RNG.ints(count)(Simple (s) )
+        is.size == count
+      }
+    }
   }
 
   def testInt(i: Int) : Boolean = {
