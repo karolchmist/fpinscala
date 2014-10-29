@@ -12,7 +12,7 @@ class StateTest extends Specification with ScalaCheck {
   "RNG" should {
     "nonNegativeInt" ! prop { (s:Int) =>
       val (i1, rng2) = RNG.nonNegativeInt( Simple (s) )
-      testInt(i1)
+      testPositiveInt(i1)
     }
     "double" ! prop { (s: Int) =>
       val (i1, rng2) = RNG.double (Simple (s) )
@@ -32,11 +32,16 @@ class StateTest extends Specification with ScalaCheck {
     }
   }
 
-  def testDouble(i1: Double): Boolean = {
-    i1 >= 0.0 && i1 < 1.0
+  def testInt(i: Int) : Boolean = {
+    // not very smart test....
+    i >= Int.MinValue && i <= Int.MaxValue
   }
 
-  def testInt(i1: Int): Boolean = {
-    i1 >= 0 && i1 <= Int.MaxValue
+  def testPositiveInt(i: Int): Boolean = {
+    i >= 0 && i <= Int.MaxValue
+  }
+
+  def testDouble(i: Double): Boolean = {
+    i >= 0.0 && i < 1.0
   }
 }
