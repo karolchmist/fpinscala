@@ -36,6 +36,14 @@ class StateTest extends Specification with ScalaCheck {
       val (is, rng2) = RNG.ints(count)(Simple (s) )
       is.size == count
     }
+    "doubleMap" ! prop { (s: Int) =>
+      val (d, rng) = RNG.doubleMap(Simple(s))
+      testDouble(d)
+    }
+    "map2" ! prop { (s: Int) =>
+      val ((i,d), rng):((Int, Double), RNG) = RNG.map2(RNG.int, RNG.double)((_,_))(Simple(s))
+      testInt(i) && testDouble(d)
+    }
   }
 
   def testInt(i: Int) : Boolean = {
@@ -47,7 +55,7 @@ class StateTest extends Specification with ScalaCheck {
     i >= 0 && i <= Int.MaxValue
   }
 
-  def testDouble(i: Double): Boolean = {
-    i >= 0.0 && i < 1.0
+  def testDouble(d: Double): Boolean = {
+    d >= 0.0 && d < 1.0
   }
 }
