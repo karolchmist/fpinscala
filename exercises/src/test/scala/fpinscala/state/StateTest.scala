@@ -48,6 +48,14 @@ class StateTest extends Specification with ScalaCheck {
       val (r, _) = RNG.nonNegativeLessThan(s)(Simple(1))
       r >= 0 && r < s
     }
+    "mapByFlatMap" ! prop { (s: Int) =>
+      val (r, _) = RNG.mapByFlatMap(RNG.unit(s))(_ * 2)(Simple(1))
+      r == s * 2
+    }
+    "map2ByFlatMap" ! prop { (s: Int) =>
+      val ((i,d), rng):((Int, Double), RNG) = RNG.map2(RNG.int, RNG.double)((_,_))(Simple(s))
+      testInt(i) && testDouble(d)
+    }
   }
 
   def testInt(i: Int) : Boolean = {
