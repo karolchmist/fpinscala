@@ -1,6 +1,6 @@
 package fpinscala.state
 
-import fpinscala.state.RNG.Simple
+import fpinscala.state.RNG.{Rand, Simple}
 import org.scalacheck.{Gen, Prop}
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
@@ -44,10 +44,14 @@ class StateTest extends Specification with ScalaCheck {
       val ((i,d), rng):((Int, Double), RNG) = RNG.map2(RNG.int, RNG.double)((_,_))(Simple(s))
       testInt(i) && testDouble(d)
     }
+    "nonNegativeLessThan" ! Prop.forAll(Gen.posNum) { (s: Int) =>
+      val (r, _) = RNG.nonNegativeLessThan(s)(Simple(1))
+      r >= 0 && r < s
+    }
   }
 
   def testInt(i: Int) : Boolean = {
-    // not very smart test....
+    // not a very smart test....
     i >= Int.MinValue && i <= Int.MaxValue
   }
 
