@@ -23,29 +23,21 @@ class EitherTest extends Specification {
     }
     "map2" in {
       def f(a:Int, b:Double):String = (a+b).toString
-      (Right(2).map2(Right(4.0))(f) ) mustEqual Right("6.0")
+      Right(2).map2(Right(4.0))(f) mustEqual Right("6.0")
     }
-//      "traverse" in {
-//        def Try[A](a: => A): Either[A] =
-//          try Right(a)
-//          catch { case e: Exception => Left("error") }
-//
-//        Either.traverse(List("1", "4"))(a=>Try(a.toInt)) mustEqual Right(List(1,4))
-//        Either.traverse(List("1", "abc", "4"))(a=>Try(a.toInt)) mustEqual Left("error")
-//      }
-//    "sequence" in {
-//      Either.sequence(List()) mustEqual Right(Nil)
-//      Either.sequence(List(Right(1))) mustEqual Right(List(1))
-//      Either.sequence(List(Right(1), Right(2))) mustEqual Right(List(1,2))
-//      Either.sequence(List(Right(1), Left("error"))) mustEqual Left("error")
-//      Either.sequence(List(Left("error"), Right(2))) mustEqual Left("error")
-//    }
-//    "sequence2" in {
-//      Either.sequence2(List()) mustEqual Right(Nil)
-//      Either.sequence2(List(Right(1))) mustEqual Right(List(1))
-//      Either.sequence2(List(Right(1), Right(2))) mustEqual Right(List(1,2))
-//      Either.sequence2(List(Right(1), Left("error"))) mustEqual Left("error")
-//      Either.sequence2(List(Left("error"), Right(2))) mustEqual Left("error")
-//    }
+      "traverse" in {
+        def positiveToRight(n:Int) = if(n > 0) Right(n) else Left(n.toString)
+
+        Either.traverse(List(1))(positiveToRight) ==== Right(List(1))
+        Either.traverse(List(1,2))(positiveToRight) ==== Right(List(1,2))
+        Either.traverse(List(1,2,-3))(positiveToRight) ==== Left("-3")
+      }
+    "sequence" in {
+      Either.sequence(List()) mustEqual Right(Nil)
+      Either.sequence(List(Right(1))) mustEqual Right(List(1))
+      Either.sequence(List(Right(1), Right(2))) mustEqual Right(List(1,2))
+      Either.sequence(List(Right(1), Left("error1"), Left("error2"))) mustEqual Left("error1")
+      Either.sequence(List(Left("error"), Right(2))) mustEqual Left("error")
+    }
   }
 }
