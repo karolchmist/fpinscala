@@ -99,12 +99,22 @@ object RNG {
       flatMap(s)(f andThen unit)
 
     def map2ByFlatMap[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
-      flatMap(ra)(a => map(a)(b => f(a,b)))
+      flatMap(ra){ a =>
+        map(rb) { b =>
+          f(a,b)
+        }
+      }
 }
 
 case class State[S,+A](run: S => (A, S)) {
+  def unit[A](a:A) : State[S, A] =
+    State( s => (a,s))
   def map[B](f: A => B): State[S, B] =
-    sys.error("todo")
+    State[S,B]{ s =>
+      run(s) match {
+        case (a,s1) => (f(a), s1)
+      }
+    }
   def map2[B,C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
     sys.error("todo")
   def flatMap[B](f: A => State[S, B]): State[S, B] =

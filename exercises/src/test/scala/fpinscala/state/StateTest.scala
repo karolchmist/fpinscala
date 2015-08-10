@@ -52,11 +52,18 @@ class StateTest extends Specification with ScalaCheck {
       val (r, _) = RNG.mapByFlatMap(RNG.unit(s))(_ * 2)(Simple(1))
       r == s * 2
     }
-    "map2ByFlatMap" ! prop { (s: Int) =>
-      val ((i,d), rng):((Int, Double), RNG) = RNG.map2(RNG.int, RNG.double)((_,_))(Simple(s))
-      testInt(i) && testDouble(d)
+    "map2ByFlatMap" ! prop { (n1: Int, n2:Int) =>
+      val (r, _) = RNG.map2ByFlatMap(RNG.unit(n1), RNG.unit(n2))((p1,p2) => p1 + p2)(Simple(1))
+      n1 + n2 <= r
     }
   }
+
+//  "State" should {
+//    "unit" ! prop { (n:Int) =>
+//      State((n,(_:Any))).unit(2) ==== State(s => (2,s))
+//
+//    }
+//  }
 
   def testInt(i: Int) : Boolean = {
     // not a very smart test....
