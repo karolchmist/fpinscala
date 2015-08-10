@@ -24,7 +24,7 @@ object Gen {
   def unit[A](a: => A): Gen[A] = Gen(State(s => (a,s)))
   def choose(start: Int, stopExclusive: Int) : Gen[Int] = Gen(State(RNG.nonNegativeLessThan(stopExclusive - start)).map(_+start))
   def boolean : Gen[Boolean] = Gen(State(RNG.int).map(_ % 2 == 0))
-  def listOfN[A](n: Int, g: Gen[A]) : Gen[List[A]] = g.flatMap(f => Gen(State()))
+//  def listOfN[A](n: Int, g: Gen[A]) : Gen[List[A]] = g.flatMap(f => Gen(State()))
 }
 
 case class Gen[A](sample : State[RNG, A]) {
