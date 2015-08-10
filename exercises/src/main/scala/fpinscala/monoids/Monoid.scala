@@ -20,13 +20,25 @@ object Monoid {
     val zero = Nil
   }
 
-  val intAddition: Monoid[Int] = sys.error("todo")
+  val intAddition: Monoid[Int] = new Monoid[Int]{
+    def op(a1: Int, a2: Int) : Int = a1 + a2
+    val zero = 0
+  }
 
-  val intMultiplication: Monoid[Int] = sys.error("todo")
+  val intMultiplication: Monoid[Int] = new Monoid[Int]{
+    def op(a1: Int, a2: Int) : Int = a1 + a2
+    val zero = 0
+  }
 
-  val booleanOr: Monoid[Boolean] = sys.error("todo")
+  val booleanOr: Monoid[Boolean] = new Monoid[Boolean]{
+    def op(a1: Boolean, a2: Boolean) = a1 || a2
+    val zero = false
+  }
 
-  val booleanAnd: Monoid[Boolean] = sys.error("todo")
+  val booleanAnd: Monoid[Boolean] = new Monoid[Boolean]{
+    def op(a1: Boolean, a2: Boolean) = a1 && a2
+    val zero = true
+  }
 
   def optionMonoid[A]: Monoid[Option[A]] = sys.error("todo")
 
@@ -72,8 +84,11 @@ object Monoid {
 
   def parFoldMap[A,B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): Par[B] = 
     sys.error("todo") 
-
-  val wcMonoid: Monoid[WC] = sys.error("todo")
+//
+//  val wcMonoid: Monoid[WC] = new Monoid[WC] {
+//    override def op(a1: WC, a2: WC): WC = a1 // FIXME
+//    override val zero: WC = ???
+//  }
 
   def count(s: String): Int = sys.error("todo")
 
